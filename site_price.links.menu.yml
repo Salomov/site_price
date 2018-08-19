@@ -1,0 +1,6 @@
+site_price.admin:
+  title: 'Price list'
+  description: ''
+  route_name: site_price.admin
+  parent: kvantstudio.admin_index
+  weight: 10  

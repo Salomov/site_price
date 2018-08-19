@@ -1,0 +1,207 @@
+/* Форма фильтр позиций */
+
+.price-position-search-form input {
+    width: 100%;
+}
+
+.site-price-position-search-form__btn_clear {
+    visibility: hidden;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    margin-top: 1em;
+}
+
+.site-price-position-search-form__message_active {
+    font-size: 150%;
+    font-weight: 100;
+    background: #f5f5f5;
+    padding: 10px;
+    color: #000000;
+}
+
+.site-price-position-search-form__message_warning {
+    font-size: 150%;
+    font-weight: 100;
+    background: #FF0000;
+    padding: 10px;
+    color: #FFFFFF;
+}
+
+.site-price-position-search-form__search-block {
+    margin-bottom: 1rem;
+}
+
+
+/* Таблица с позициями прайс-листа */
+
+.price {
+    max-width: 768px;
+    margin: 0 auto 50px auto;
+}
+
+.price__group-title {
+    font-size: 30px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.price__category {
+    background: #F7F7F7;
+    padding: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.price__category-title {
+    text-transform: uppercase;
+    font-size: 20px;
+    font-weight: 700;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.price__category-description {
+    padding-top: 10px;
+}
+
+.price__administrator {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.price__administrator-link {
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: initial;
+    text-shadow: none;
+}
+
+.price__administrator_group {
+    padding-left: 20px;
+    margin-bottom: 20px;
+}
+
+.price__position {
+    padding: 15px 0;
+    border-bottom: #f3f3f3 1px solid;
+    background: #ffffff;
+}
+
+.price__position:last-of-type {
+    border-bottom: none;
+}
+
+.price__position-cost {
+    font-weight: 700;
+}
+
+.price__position-cost-value {
+    white-space: nowrap;
+}
+
+.price__position-cost-block {
+    display: block;
+    padding: 5px;
+    background: #f9f9f9;
+}
+
+.price__category-cost {
+    margin: 20px 0;
+    color: white;
+    background: #2c4b9a;
+    padding: 15px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    display: inline-block;
+    float: right;
+}
+
+.price__category-cost-none-tax {
+    font-size: 14px;
+}
+
+.price__category-cost-tax {
+    font-size: 20px;
+}
+
+.price__position-admin:hover {
+    cursor: move;
+    background: #CCEBF5;
+}
+
+
+/* Переназначение стилей jquery-ui. */
+
+.price .ui-state-highlight {
+    height: 50px;
+    border: 1px solid #fcefa1;
+    background: #fbf9ee;
+    color: #363636;
+}
+
+.price .ui-sortable-helper {
+    background: #2AABD2;
+    color: #FFFFFF;
+}
+
+
+/* Переназначение стилей Drupal */
+
+.form-actions {
+    padding-top: 0 !important;
+}
+
+
+/* Медиазапросы. */
+
+@media (min-width: 768px) {
+    .price__position {
+        padding: 15px 0;
+    }
+    .price__position-title {
+        width: 60%;
+        display: inline-block;
+    }
+    .price__position-cost {
+        float: right;
+        width: 40%;
+        text-align: right;
+    }
+    .price__position-cost-block {
+        display: inline;
+        padding: 0;
+        background: 0;
+    }
+    .price__position-cost-block-title {
+        display: none;
+    }
+    .price__category-positions {
+        margin-bottom: 50px;
+    }
+    .site-price-position-search-form__search-block div {
+        display: initial;
+    }
+    .site-price-position-search-form__btn {
+        max-width: 150px !important;
+        margin: 0 10px;
+    }
+    .site-price-position-search-form__text-field {
+        max-width: 300px;
+    }
+    .site-price-position-search-form__btn_clear {
+        margin-left: 1em !important;
+        margin-top: 0;
+    }
+}
+
+@media (min-width: 1024px) {
+    .price__position-title {
+        width: 70%;
+    }
+    .price__position-cost {
+        width: 30%;
+    }
+}

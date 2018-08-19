@@ -1,0 +1,224 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2016-12-06 20:36+0500\n"
+"PO-Revision-Date: 2016-12-06 20:40+0500\n"
+"Last-Translator: Pavel Filinkov <info@filinkov.ru>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: ru_RU\n"
+
+msgid "Module to create a price list for Drupal 8."
+msgstr "Модуль создания прайс-листа для Drupal 8."
+
+msgid "Allow access to administer of price list"
+msgstr "Разрешает доступ к управлению прайс-листом"
+
+msgid "Select group of price list."
+msgstr "Выберите группу прайс-листа."
+
+msgid "Price list"
+msgstr "Прайс-лист"
+
+msgid "Edit price list"
+msgstr "Редактировать прайс-лист"
+
+msgid "Delete price list"
+msgstr "Удалить прайс-лист"
+
+msgid "Price list «@title» created."
+msgstr "Прайс-лист «@title» создан."
+
+msgid "Price list «@title» updated."
+msgstr "Прайс-лист «@title» обновлен."
+
+msgid "To display the current price list, use the call <strong>@function</strong> function in your template."
+msgstr "Для отображения текущего прайс-листа используйте вызов функции <strong>@function</strong> в своем шаблоне."
+
+msgid "To display the search form, use the call <strong>@function</strong> function in your template."
+msgstr "Для отображения формы поиска используйте вызов функции <strong>@function</strong> в своем шаблоне."
+
+msgid "Create price list"
+msgstr "Создать прайс-лист"
+
+msgid "Create group"
+msgstr "Создать группу"
+
+msgid "Edit group"
+msgstr "Редактировать группу"
+
+msgid "Delete group"
+msgstr "Удалить группу"
+
+msgid "Group «@title» created."
+msgstr "Группа «@title» создана."
+
+msgid "Group «@title» updated."
+msgstr "Группа «@title» обновлена."
+
+msgid "Group «@title» deleted."
+msgstr "Группа «@title» удалена."
+
+msgid "Create category"
+msgstr "Создать категорию"
+
+msgid "Edit category"
+msgstr "Редактировать категорию"
+
+msgid "Delete category"
+msgstr "Удалить категорию"
+
+msgid "Category <strong>@title</strong> created."
+msgstr "Категория <strong>@title</strong> создана."
+
+msgid "Category updated."
+msgstr "Категория обновлена."
+
+msgid "Category deleted."
+msgstr "Категория удалена."
+
+msgid "Create position"
+msgstr "Создать позицию"
+
+msgid "Edit position"
+msgstr "Редактировать позицию"
+
+msgid "Add position"
+msgstr "Добавить позицию"
+
+msgid "Delete position from system"
+msgstr "Удалить позицию из системы"
+
+msgid "Delete position from content"
+msgstr "Удалить позицию из состава"
+
+msgid "Create position for group <strong>@title</strong>."
+msgstr "Создать позицию для группы <strong>@title</strong>."
+
+msgid "Create position for category <strong>@title</strong>."
+msgstr "Создать позицию для категории <strong>@title</strong>."
+
+msgid "Position <strong>@title</strong> created."
+msgstr "Позиция <strong>@title</strong> создана."
+
+msgid "Position <strong>@title</strong> updated."
+msgstr "Позиция <strong>@title</strong> обновлена."
+
+msgid "Are you sure you want to delete «@title» from content?"
+msgstr "Вы хотите удалить «@title» из состава?"
+
+msgid "Position «@title» deleted from content."
+msgstr "Позиция «@title» удалена из состава."
+
+msgid "Position deleted."
+msgstr "Позиция удалена."
+
+msgid "Code"
+msgstr "Код"
+
+msgid "Cost"
+msgstr "Стоимость"
+
+msgid "Cost discount"
+msgstr "Стоимость со скидкой"
+
+msgid "Position added."
+msgstr "Позиция добавлена."
+
+msgid "Error adding positions."
+msgstr "Ошибка добавления позиции."
+
+msgid "Add position in the composition"
+msgstr "Добавить позицию в состав"
+
+msgid "Search position"
+msgstr "Найти позицию"
+
+msgid "free"
+msgstr "бесплатно"
+
+msgid "Display in the price list"
+msgstr "Отображать в прайс-листе"
+
+msgid "Display cost of positions"
+msgstr "Отображать стоимости позиций"
+
+msgid "Price without tax"
+msgstr "Цена без скидки"
+
+msgid "Price action"
+msgstr "Цена по акции"
+
+msgid "Load"
+msgstr "Загрузить"
+
+msgid "Price list «@title» deleted."
+msgstr "Прайс-лист «@title» удален."
+
+msgid "Added a link between <strong>@title</strong>."
+msgstr "Добавлена связь между <strong>@title</strong>."
+
+msgid "The position will be established without reference to the group or category."
+msgstr "Позиция будет создана без привязки к группе или категории."
+
+msgid "Create your first price list in the form below."
+msgstr "Создайте свой первый прайс-лист в форме ниже."
+
+msgid "Quick search"
+msgstr "Быстрый поиск"
+
+msgid "Find"
+msgstr "Найти"
+
+msgid "Write what you want to find"
+msgstr "Напишите, что хотите найти"
+
+msgid "Results search: @text"
+msgstr "Результаты поиска: @text"
+
+msgid "Type in the search box the first letter of your request and then click «Find»."
+msgstr "Наберите в поле поиска первые буквы своего запроса и нажмите кнопку «Найти»."
+
+msgid "Free"
+msgstr "Бесплатно"
+
+msgid "Prefix"
+msgstr "Префикс"
+
+msgid "Suffix"
+msgstr "Суффикс"
+
+msgid "Cost from"
+msgstr "Стоимость от"
+
+msgid "from"
+msgstr "от"
+
+msgid "before"
+msgstr "до"
+
+msgid "If you fill in, it will show the value of the field «Discount Price» instead of the value of the field «Price»."
+msgstr "Если заполнить, то будет отображаться значение из поля «Стоимость со скидкой» вместо значения из поля «Стоимость»."
+
+msgid "Main or the maximum cost of the position."
+msgstr "Основная или масимальная стоимость позиции."
+
+msgid "The text that appears before the cost."
+msgstr "Текст, который отображается до стоимости."
+
+msgid "The text that appears after the cost."
+msgstr "Текст, который отображается после стоимости."
+
+msgid "Show all"
+msgstr "Показать все"
+
+msgid "Link URL"
+msgstr "Адрес ссылки"
+
+msgid "Search page number by name"
+msgstr "Поиск номера страницы по названию"

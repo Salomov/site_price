@@ -1,0 +1,4 @@
+# Разрешить доступ к управлению прайс-листом.
+site price administer:
+  title: 'Allow access to administer of price list'
+  restrict access: TRUE

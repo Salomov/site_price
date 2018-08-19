@@ -1,0 +1,32 @@
+/* Формы администрирования */
+
+.price-admin-page {
+    margin-top: 50px;
+}
+
+.site-price-position-form__container {
+    background-color: #ececec;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+}
+
+.button,
+.button:visited {
+    font-size: 0.7em;
+    padding: 10px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #F4F4F4;
+    text-decoration: none;
+    vertical-align: middle;
+    border: 1px solid #cccccc;
+    color: #C8A2C8;
+}
+
+.button:hover,
+.button:focus {
+    background: #f9f9f9;
+    text-decoration: none;
+    color: #C8A2C8;
+}

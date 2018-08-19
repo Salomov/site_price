@@ -1,0 +1,154 @@
+# Управление прайc-листами.
+site_price.admin:
+  path: '/admin/config/kvantstudio/price/{edit}'
+  defaults:
+    _title: 'Price list'
+    _controller: '\Drupal\site_price\Controller\PriceController::getPrice'
+    edit: TRUE
+  requirements:
+    _permission: 'site price administer'
+
+# Создание прайс-листа.
+site_price.create_price:
+  path: '/admin/config/kvantstudio/price/create-price'
+  defaults:
+    _title: 'Create price list'
+    _form: '\Drupal\site_price\Form\PriceForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.edit_price:
+  path: '/admin/config/kvantstudio/price/edit-price/{prid}'
+  defaults:
+    _title: 'Edit price list'
+    _form: '\Drupal\site_price\Form\PriceForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.delete_confirm_price:
+  path: '/admin/config/kvantstudio/price/delete-price/{prid}'
+  defaults:
+    _form: '\Drupal\site_price\Form\ConfirmPriceDeleteForm'
+    _title: 'Delete price list'
+    prid: 0
+  requirements:
+    _permission: 'site price administer'
+
+# Создание группы прайс-листа.
+site_price.create_price_group:
+  path: '/admin/config/kvantstudio/price/create-price-group'
+  defaults:
+    _title: 'Create group'
+    _form: '\Drupal\site_price\Form\PriceGroupForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.edit_price_group:
+  path: '/admin/config/kvantstudio/price/edit-price-group/{gid}'
+  defaults:
+    _title: 'Edit group'
+    _form: '\Drupal\site_price\Form\PriceGroupForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.delete_confirm_price_group:
+  path: '/admin/config/kvantstudio/price/delete-price-group/{gid}'
+  defaults:
+    _form: '\Drupal\site_price\Form\ConfirmPriceGroupDeleteForm'
+    _title: 'Delete group'
+  requirements:
+    _permission: 'site price administer'
+
+# Ajax обработчик изменяет вес позиции в категории.
+site_price.group-positions-set-weight:
+  path: '/admin/config/kvantstudio/price/group-positions-set-weight/{gid}/{pids}/{method}'
+  defaults:
+    _controller: '\Drupal\site_price\Controller\PriceAjaxController::groupPositionsSetWeight'
+  requirements:
+    _permission: 'site price administer'
+    method: 'nojs|ajax'
+
+# Управление категориями.
+site_price.create_price_category:
+  path: '/admin/config/kvantstudio/price/create-price-category'
+  defaults:
+    _title: 'Create category'
+    _form: '\Drupal\site_price\Form\PriceCategoryForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.edit_price_category:
+  path: '/admin/config/kvantstudio/price/edit-price-category/{cid}'
+  defaults:
+    _form: '\Drupal\site_price\Form\PriceCategoryForm'
+    _title: 'Edit category'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.delete_confirm_price_category:
+  path: '/admin/config/kvantstudio/price/delete-price-category/{cid}'
+  defaults:
+    _form: '\Drupal\site_price\Form\ConfirmPriceCategoryDeleteForm'
+    _title: 'Delete category'
+  requirements:
+    _permission: 'site price administer'
+
+# Управление позициями.
+site_price.create_price_position:
+  path: '/admin/config/kvantstudio/price/create-price-position/{pid}/{id}/{type}'
+  defaults:
+    _title: 'Create position'
+    _form: '\Drupal\site_price\Form\PricePositionForm'
+    pid: 0
+    id: 0
+    type: NULL
+  requirements:
+    _permission: 'site price administer'
+
+site_price.search_price_position:
+  path: '/admin/config/kvantstudio/price/search-price-position/{id}/{type}'
+  defaults:
+    _title: 'Add position in the composition'
+    _form: '\Drupal\site_price\Form\PricePositionSearchForm'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.search_price_position_autocomplete:
+  path: '/price-position-search-autocomplete'
+  defaults:
+    _controller: '\Drupal\site_price\Controller\PricePositionSearchAutocomplete::autocomplete'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.delete_confirm_position:
+  path: '/admin/config/kvantstudio/price/delete-price-position/{pid}'
+  defaults:
+    _form: '\Drupal\site_price\Form\ConfirmPricePositionDeleteForm'
+    _title: 'Delete position from system'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.delete_content_confirm_position:
+  path: '/admin/config/kvantstudio/price/delete-content-price-position/{pid}/{id}/{type}'
+  defaults:
+    _form: '\Drupal\site_price\Form\ConfirmPricePositionDeleteContentForm'
+    _title: 'Delete position from content'
+  requirements:
+    _permission: 'site price administer'
+
+site_price.filter_positions:
+  path: '/price/filter-positions/{prid}/{edit}'
+  defaults:
+    _title: 'Filter positions'
+    _form: '\Drupal\site_price\Form\PricePositionFilterForm'
+  requirements:
+    _permission: 'access content'
+
+# Ajax обработчик изменяет вес позиции в категории.
+site_price.category_positions_set_weight:
+  path: '/admin/config/kvantstudio/price/category-positions-set-weight/{cid}/{pids}/{method}'
+  defaults:
+    _controller: '\Drupal\site_price\Controller\PriceAjaxController::categoryPositionsSetWeight'
+  requirements:
+    _permission: 'site price administer'
+    method: 'nojs|ajax'

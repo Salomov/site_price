@@ -1,0 +1,564 @@
+<?php
+
+/**
+ * @file
+ * Install file for the site_price.module.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_schema().
+ */
+function site_price_schema() {
+  $schema['site_price'] = array(
+    'description' => 'Таблица для типов прайс-листов.',
+    'fields' => array(
+      'prid' => array(
+        'description' => 'Идентификатор.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uuid' => array(
+        'description' => 'UUID строковое значение.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'title' => array(
+        'description' => 'Название.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'description' => 'Описание',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+      'created' => array(
+        'description' => 'Дата создания.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'Дата обновления.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Статус активности.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+    ),
+    'primary key' => array('prid'),
+    'unique keys' => array(
+      'uuid' => array('uuid'),
+    ),
+  );
+
+  $schema['site_price_groups'] = array(
+    'description' => 'Таблица для ценовых групп.',
+    'fields' => array(
+      'gid' => array(
+        'description' => 'Идентификатор.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uuid' => array(
+        'description' => 'UUID строковое значение.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'prid' => array(
+        'description' => 'Идентификатор прайса.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'Название группы.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'description' => 'Описание группы.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+      'cost' => array(
+        'description' => 'Стоимость группы.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cost_discount' => array(
+        'description' => 'Стоимость группы с учетом скидки.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'Дата создания.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'Дата обновления.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Статус активности.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'weight' => array(
+        'description' => 'Вес.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('gid'),
+    'unique keys' => array(
+      'uuid' => array('uuid'),
+    ),
+    'foreign keys' => array(
+      'site_price_hierarchy' => array(
+        'table' => 'site_price_hierarchy',
+        'columns' => array('cid' => 'cid'),
+      ),
+    ),
+  );
+
+  $schema['site_price_categories'] = array(
+    'description' => 'Таблица для категорий позиций.',
+    'fields' => array(
+      'cid' => array(
+        'description' => 'Идентификатор.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uuid' => array(
+        'description' => 'UUID строковое значение.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'prid' => array(
+        'description' => 'Идентификатор прайса.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'gid' => array(
+        'description' => 'Идентификатор группы.',
+        'type' => 'int',
+        'not null' => TRUE,
+      ),
+      'title' => array(
+        'description' => 'Название категории.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'description' => 'Описание категории.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+      'cost' => array(
+        'description' => 'Стоимость категории.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cost_discount' => array(
+        'description' => 'Стоимость категории с учетом скидки.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'discount' => array(
+        'description' => 'Размер скидки.',
+        'type' => 'numeric',
+        'precision' => 3,
+        'scale' => 0,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'Дата создания.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'Дата обновления.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'validaty' => array(
+        'description' => 'Срок действия до.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Статус активности.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'status_cost' => array(
+        'description' => 'Статус активности цен позиций.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'weight' => array(
+        'description' => 'Вес.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('cid'),
+    'unique keys' => array(
+      'uuid' => array('uuid'),
+    ),
+    'foreign keys' => array(
+      'site_price_groups' => array(
+        'table' => 'site_price_groups',
+        'columns' => array('gid' => 'gid'),
+      ),
+      'site_price_hierarchy' => array(
+        'table' => 'site_price_hierarchy',
+        'columns' => array('cid' => 'cid'),
+      ),
+    ),
+  );
+
+  $schema['site_price_positions'] = array(
+    'description' => 'Таблица для позиций.',
+    'fields' => array(
+      'pid' => array(
+        'description' => 'Идентификатор.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uuid' => array(
+        'description' => 'UUID строковое значение.',
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'code' => array(
+        'description' => 'Код позиции.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => FALSE,
+        'default' => '',
+      ),
+      'title' => array(
+        'description' => 'Название категории.',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+      ),
+      'description' => array(
+        'description' => 'Описание категории.',
+        'type' => 'text',
+        'not null' => FALSE,
+      ),
+      'cost_prefix' => array(
+        'description' => 'Префикс стоимости.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => FALSE,
+        'default' => '',
+      ),
+      'cost_from' => array(
+        'description' => 'Стоимость от.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cost' => array(
+        'description' => 'Стоимость.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cost_suffix' => array(
+        'description' => 'Суффикс стоимости.',
+        'type' => 'varchar',
+        'length' => 20,
+        'not null' => FALSE,
+        'default' => '',
+      ),
+      'cost_discount' => array(
+        'description' => 'Стоимость с учетом скидки.',
+        'type' => 'numeric',
+        'precision' => 10,
+        'scale' => 2,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'discount' => array(
+        'description' => 'Размер скидки.',
+        'type' => 'numeric',
+        'precision' => 3,
+        'scale' => 0,
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'Дата создания.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'Дата обновления.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Статус активности.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 1,
+      ),
+      'free' => array(
+        'description' => 'Статус бесплатно.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'nid' => array(
+        'description' => 'Номер node.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('pid'),
+    'unique keys' => array(
+      'uuid' => array('uuid'),
+    ),
+    'foreign keys' => array(
+      'site_price_hierarchy' => array(
+        'table' => 'site_price_hierarchy',
+        'columns' => array('pid' => 'pid'),
+      ),
+    ),
+  );
+
+  $schema['site_price_hierarchy'] = array(
+    'description' => 'Таблица для связей групп и позиций.',
+    'fields' => array(
+      'gid' => array(
+        'description' => 'Идентификатор группы.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'cid' => array(
+        'description' => 'Идентификатор категории.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'pid' => array(
+        'description' => 'Идентификатор позиции.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'weight' => array(
+        'description' => 'Вес.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Update database structure.
+ */
+function site_price_update_8101(&$sandbox) {
+  // Инициализирует объект схему.
+  $schema = Database::getConnection()->schema();
+  $table_schema = drupal_get_module_schema('site_price');
+
+  // Добавляет таблицу.
+  $schema->createTable('site_price', $table_schema['site_price']);
+
+  // Создает прайс-лист по умолчанию.
+  $uuid = \Drupal::service('uuid');
+  $data = array(
+    'uuid' => $uuid->generate(),
+    'title' => t('Default price list'),
+    'description' => '',
+    'created' => REQUEST_TIME,
+    'changed' => REQUEST_TIME,
+    'status' => 1,
+  );
+  $return_created = \Drupal::service('site_price.database')->insertPrice($data);
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Идентификатор прайса.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 1,
+  );
+  $schema->addField('site_price_groups', 'prid', $spec);
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Идентификатор прайса.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 1,
+  );
+  $schema->addField('site_price_categories', 'prid', $spec);
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Вес.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  $schema->addField('site_price_hierarchy', 'weight', $spec);
+
+  // Удаляет поле.
+  $schema->dropField('site_price_positions', 'weight');
+
+  return t('Update database structure successfully.');
+}
+
+/**
+ * Update database structure.
+ */
+function site_price_update_8102(&$sandbox) {
+  // Инициализирует объект схему.
+  $schema = Database::getConnection()->schema();
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Статус бесплатно.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  $schema->addField('site_price_positions', 'free', $spec);
+
+  return t('Update database structure successfully.');
+}
+
+/**
+ * Update database structure.
+ */
+function site_price_update_8103(&$sandbox) {
+  // Инициализирует объект схему.
+  $schema = Database::getConnection()->schema();
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Префикс стоимости.',
+    'type' => 'varchar',
+    'length' => 20,
+    'not null' => FALSE,
+    'default' => '',
+  );
+  $schema->addField('site_price_positions', 'cost_prefix', $spec);
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Стоимость от.',
+    'type' => 'numeric',
+    'precision' => 10,
+    'scale' => 2,
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  $schema->addField('site_price_positions', 'cost_from', $spec);
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Суффикс стоимости.',
+    'type' => 'varchar',
+    'length' => 20,
+    'not null' => FALSE,
+    'default' => '',
+  );
+  $schema->addField('site_price_positions', 'cost_suffix', $spec);
+
+  return t('Update database structure successfully.');
+}
+
+/**
+ * Update database structure.
+ */
+function site_price_update_8104(&$sandbox) {
+  // Инициализирует объект схему.
+  $schema = Database::getConnection()->schema();
+
+  // Добавляет поле к таблице БД.
+  $spec = array(
+    'description' => 'Номер node.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  $schema->addField('site_price_positions', 'nid', $spec);
+
+  return t('Update database structure successfully.');
+}

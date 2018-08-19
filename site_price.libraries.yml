@@ -1,0 +1,33 @@
+site_price.module:
+  css:
+    theme:
+      css/site-price.module.css: {}
+  js:
+    js/site-price.module.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupal.ajax
+    - core/drupalSettings
+
+site_price.admin:
+  css:
+    theme:
+      css/site-price.administrator-theme.css: {}
+  js:
+    js/site-price.admin.js: {}
+  dependencies:
+    - core/jquery.ui.sortable
+    - site_price/site_price.module
+
+# Библиотека для загрузки векторных иконок набор fontawesome.
+# CDN вариант заугрузки для сайтов c выходом в интернет.
+fontawesome.external:
+  remote: https://www.bootstrapcdn.com/fontawesome/
+  version: 4.7.0
+  license:
+    name: MIT
+    gpl-compatible: false
+  css:
+    component:
+      https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css: { type: external, minified: true }

@@ -1,0 +1,24 @@
+site_price.tabdefault:
+  route_name: site_price.admin
+  base_route: site_price.admin
+  title: 'Price list'
+
+site_price.create_price:
+  route_name: site_price.create_price
+  title: 'Create price list'
+  base_route: site_price.admin
+
+site_price.create_price_group:
+  route_name: site_price.create_price_group
+  title: 'Create group'
+  base_route: site_price.admin  
+
+site_price.create_price_category:
+  route_name: site_price.create_price_category
+  title: 'Create category'
+  base_route: site_price.admin
+
+site_price.create_price_position:
+  route_name: site_price.create_price_position
+  title: 'Create position'
+  base_route: site_price.admin    

@@ -1,0 +1,9 @@
+services:
+  site_price.database:
+    class: Drupal\site_price\Controller\PriceDatabaseController
+    arguments: ['@database']
+
+  site_price.twig_extension:       
+    class: Drupal\site_price\TwigExtension\SitePriceTwigExtension
+    tags:
+      - { name: twig.extension }    

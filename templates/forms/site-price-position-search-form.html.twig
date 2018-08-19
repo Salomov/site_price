@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Шаблон отображения формы поиска-фильтрации позиций в прайс-листе.
+ *
+ * Доступные переменные:
+ * - form: Полная форма. Используйте {{ form }} для вывода полной формы,
+ *   или только ее части {{ form.actions }}. Используйте {% form|without(actions) %} для скрытия элементов формы.
+ *   - form.search_text_field: Поле поиска.
+ *   - form.actions: Кнопка поиска.
+ *   - form.system_message: Строка для вывода сообщений.
+ *
+ * @ingroup themable
+ */
+#}
+{# Скрываем поля. #}
+{{ form|without('search_text_field', 'actions', 'system_message') }}
+
+{# Поле поиска и кнопка. #}
+<div class="site-price-position-search-form__search-block">{{ form.search_text_field }} {{ form.actions }}</div>
+
+{# Системное уведомление о результатах поиска. #}
+{{ form.system_message }}

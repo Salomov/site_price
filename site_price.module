@@ -1,0 +1,261 @@
+<?php
+
+/**
+ * @file
+ * Main file for the site_price.module.
+ */
+
+use Drupal\Core\Database\Database;
+use Drupal\kvantstudio\Formatter;
+
+/**
+ * Implements hook_theme().
+ */
+function site_price_theme($existing, $type, $theme, $path) {
+  return array(
+    'site_price_admin_page' => array(
+      'variables' => array(),
+      'template' => 'price-admin-page',
+    ),
+    'site_price' => array(
+      'variables' => array('prid' => NULL, 'edit' => NULL, 'filter' => NULL),
+      'template' => 'price',
+    ),
+    'site_price_position_search_form' => array(
+      'render element' => 'form',
+      'path' => drupal_get_path('module', 'site_price') . '/templates/forms',
+      'template' => 'site-price-position-search-form',
+    ),
+  );
+}
+
+/**
+ * Prepares variables for price-admin-page.html.twig.
+ */
+function template_preprocess_site_price_admin_page(&$variables) {
+  $form = \Drupal::formBuilder()->getForm('Drupal\site_price\Form\PriceLoadForm');
+  $variables['site_price_load_form'] = \Drupal::service('renderer')->render($form, FALSE);
+
+  $prid = \Drupal::state()->get('site_price.last_price_load', 0);
+  $variables['prid'] = 1;
+  $variables['site_price_load'] = "";
+  if ($prid) {
+    // Загружает прайс-лист по идентификатору.
+    $renderData = array(
+      '#theme' => 'site_price',
+      '#prid' => $prid,
+      '#edit' => TRUE,
+    );
+    $variables['site_price_load'] = \Drupal::service('renderer')->render($renderData, FALSE);
+    $variables['prid'] = $prid;
+  }
+}
+
+/**
+ * Prepares variables for price.html.twig.
+ */
+function template_preprocess_site_price(&$variables) {
+  $account = \Drupal::currentUser();
+  $database = Database::getConnection();
+
+  // Проверка прав доступа для администратора курса.
+  $variables['administrator'] = FALSE;
+  if ($account->hasPermission('site price administer') && $variables['edit']) {
+    $variables['administrator'] = TRUE;
+
+    // Устанавливаем принудительно текущий активный прайс-лист.
+    \Drupal::state()->set('site_price.last_price_load', $variables['prid']);
+  }
+
+  // Определяет параметры фильтра.
+  $filter = NULL;
+  if ($filter = $variables['filter']) {
+    $string_array = explode(" ", $filter);
+    $request = '';
+    $arguments = array();
+    $i = 1;
+    $count_array_string = count($string_array);
+    foreach ($string_array as $key) {
+      $arguments[':key' . $i] = $key;
+      if ($count_array_string > $i) {
+        $request .= 'INSTR(n.title, :key' . $i . ') > 0 AND ';
+      } else {
+        $request .= 'INSTR(n.title, :key' . $i . ') > 0';
+      }
+      $i++;
+    }
+  }
+
+  // Перечень групп.
+  $query = $database->select('site_price_groups', 'n');
+  $query->fields('n');
+  if (!$variables['administrator']) {
+    $query->condition('n.status', 1);
+  }
+  if ($variables['prid']) {
+    $query->condition('n.prid', $variables['prid']);
+  }
+  $query->orderBy('n.created');
+  $result = $query->execute();
+
+  // Формирует результаты запроса.
+  foreach ($result as $row) {
+    // Название группы.
+    $variables['groups'][$row->gid]['title'] = $row->title;
+
+    // Позиции привязанные к группе.
+    $query = $database->select('site_price_positions', 'n');
+    $query->fields('n');
+    if ($filter) {
+      $query->where($request, $arguments);
+    }
+    $query->join('site_price_hierarchy', 'h', 'h.pid = n.pid');
+    $query->orderBy('h.weight');
+    $query->condition('h.gid', $row->gid);
+    $result_positions = $query->execute();
+
+    // Переменная наличия позиций в группе.
+    $variables['groups'][$row->gid]['visible'] = FALSE;
+
+    foreach ($result_positions as $row_positions) {
+      // Название позиции.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['title'] = $row_positions->title;
+
+      // Привязка к странице с описанием.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['nid'] = $row_positions->nid;
+
+      // Префикс стоимости.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['cost_prefix'] = $row_positions->cost_prefix;
+
+      // Суффикс стоимости.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['cost_suffix'] = $row_positions->cost_suffix;
+
+      // Стоимость позиции от.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['cost_from'] = Formatter::price($row_positions->cost_from);
+
+      // Стоимость позиции.
+      $cost_position = Formatter::price($row_positions->cost);
+      $cost_position_discount = Formatter::price($row_positions->cost_discount);
+      if ($cost_position && !$cost_position_discount) {
+        $variables['groups'][$row->gid]['positions'][$row_positions->pid]['cost'] = $cost_position;
+      }
+      if ($cost_position_discount) {
+        $variables['groups'][$row->gid]['positions'][$row_positions->pid]['cost'] = $cost_position_discount;
+      }
+
+      // Статус бесплатно.
+      $variables['groups'][$row->gid]['positions'][$row_positions->pid]['free'] = (bool) $row_positions->free;
+
+      $variables['groups'][$row->gid]['visible'] = TRUE;
+    }
+
+    // Категории привязанные к группе.
+    $query = $database->select('site_price_categories', 'n');
+    $query->fields('n');
+    $query->orderBy('n.created');
+    $query->condition('n.gid', $row->gid);
+    if (!$variables['administrator']) {
+      $query->condition('n.status', 1);
+    }
+    $result_categories = $query->execute();
+
+    foreach ($result_categories as $row_categories) {
+      // Название категории.
+      $variables['groups'][$row->gid]['categories'][$row_categories->cid]['title'] = $row_categories->title;
+      $variables['groups'][$row->gid]['categories'][$row_categories->cid]['description'] = $row_categories->description;
+
+      // Отображение основной стоимости или стоимости со скидкой.
+      $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost'] = 0;
+
+      $cost_category = Formatter::price($row_categories->cost);
+      $cost_category_discount = Formatter::price($row_categories->cost_discount);
+      if ($cost_category && !$cost_category_discount) {
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost'] = $cost_category;
+      }
+      if ($cost_category_discount) {
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost'] = $cost_category_discount;
+      }
+
+      // Позиции привязанные к категории.
+      $query = $database->select('site_price_positions', 'n');
+      $query->fields('n');
+      if ($filter) {
+        $query->where($request, $arguments);
+      }
+      $query->join('site_price_hierarchy', 'h', 'h.pid = n.pid');
+      $query->condition('h.cid', $row_categories->cid);
+      $query->orderBy('h.weight');
+      $result_positions = $query->execute();
+
+      // Переменная наличия позиций в категории.
+      $variables['groups'][$row->gid]['categories'][$row_categories->cid]['visible'] = FALSE;
+
+      $cost_position_total = 0;
+      foreach ($result_positions as $row_positions) {
+        $cost_position_discount = 0;
+
+        // Название позиции.
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['title'] = $row_positions->title;
+
+        // Префикс стоимости.
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost_prefix'] = $row_positions->cost_prefix;
+
+        // Суффикс стоимости.
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost_suffix'] = $row_positions->cost_suffix;
+
+        // Стоимость позиции от.
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost_from'] = Formatter::price($row_positions->cost_from);
+
+        // Стоимость позиции.
+        $cost_position = Formatter::price($row_positions->cost);
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost'] = '';
+        if ($row_categories->status_cost) {
+          if ($cost_category) {
+            $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost'] = $cost_position;
+          } else {
+            $cost_position_discount = Formatter::price($row_positions->cost_discount);
+
+            if ($cost_position && !$cost_position_discount) {
+              $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost'] = $cost_position;
+            }
+
+            if ($cost_position_discount) {
+              $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['cost'] = $cost_position_discount;
+            }
+          }
+        }
+
+        // Статус бесплатно.
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['positions'][$row_positions->pid]['free'] = (bool) $row_positions->free;
+
+        // Стоимость общая по всем позициям в категории.
+        $cost_position_total = $cost_position_total + (float) $cost_position;
+
+        $variables['groups'][$row->gid]['visible'] = TRUE;
+        $variables['groups'][$row->gid]['categories'][$row_categories->cid]['visible'] = TRUE;
+      }
+
+      // Определяем нужно ли отображать сообщение о скидке.
+      // Выводим его если стоимость позиций не совпадает со стоимостью категорий.
+      // Правильно, чтобы стоимость категории была меньше стоимости позиций - это равнозначно скидке.
+      $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost_discount'] = 0;
+      $cost = 0;
+      if ($cost_category) {
+        if ($cost_category_discount) {
+          $cost = Formatter::price($cost_category - $cost_category_discount);
+          $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost_none_discount'] = $cost_category;
+        }
+
+        if (!$cost_category_discount && $cost_position_total > $cost_category) {
+          $cost = $cost_category;
+          $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost_none_discount'] = $cost_position_total;
+        }
+
+        if ($cost) {
+          $variables['groups'][$row->gid]['categories'][$row_categories->cid]['cost_discount'] = $cost;
+        }
+      }
+
+    }
+  }
+}
