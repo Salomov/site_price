@@ -55,9 +55,9 @@ class PricePositionSearchAutocomplete {
           $value = Html::escape($row->title);
 
           if ($row->code) {
-            $matches[] = ['value' => $value, 'label' => $row->pid . ' : ' . $row->code . ' : ' . $value . ' (' . $cost . ' руб.)'];
+            $matches[] = ['value' => '(' . $row->pid . ') ' . $value, 'label' => $row->pid . ' : ' . $row->code . ' : ' . $value . ' (' . $cost . ' руб.)'];
           } else {
-            $matches[] = ['value' => $value, 'label' => $row->pid . ' : ' . $value . ' (' . $cost . ' руб.)'];
+            $matches[] = ['value' => '(' . $row->pid . ') ' . $value, 'label' => $row->pid . ' : ' . $value . ' (' . $cost . ' руб.)'];
           }
 
         }
