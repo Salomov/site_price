@@ -8,95 +8,32 @@
   {% for gid, group in groups %}
   {% if group.visible or administrator %}
   <div class="price__group" id="price__group-{{ gid }}">
-    <h2 class="price__group-title">{{ group.title|striptags }}</h2>
+    <h2 data-group="{{ gid }}" class="price__group-title">{{ group.title|striptags }}</h2>
+    <div class="price__group-items" id="price__group-items-{{ gid }}">
+      {% if administrator %}
+        <div class="price__administrator price__administrator_group">
+          <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/edit-price-group/{{ gid }}">{{ 'Edit group'|t }}</a>
+          <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-group/{{ gid }}">{{ 'Delete group'|t }}</a>
+          <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/0/{{ gid }}/group">{{ 'Create position'|t }}</a>
+          <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/search-price-position/{{ gid }}/group">{{ 'Add position'|t }}</a>
+        </div>
+      {% endif %}
 
-    {% if administrator %}
-      <div class="price__administrator price__administrator_group">
-        <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/edit-price-group/{{ gid }}">{{ 'Edit group'|t }}</a>
-        <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-group/{{ gid }}">{{ 'Delete group'|t }}</a>
-        <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/0/{{ gid }}/group">{{ 'Create position'|t }}</a>
-        <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/search-price-position/{{ gid }}/group">{{ 'Add position'|t }}</a>
-      </div>
-    {% endif %}
-
-    <div class="price__group-positions clearfix" id="price__group-positions-{{ gid }}" group-id="{{ gid }}">
-      {% for pid, position in group.positions %}
-      <div class="price__position{% if administrator %} price__position-admin{% endif %} clearfix" id="price__position-{{ pid }}">
-        {% if position.nid %}
-          <span class="price__position-title" id="price__position-title-{{ pid }}">
-            <a class="price__position-link" target="_blank" href="{{ path('entity.node.canonical', {'node': position.nid}) }}">{{ position.title|striptags }}</a>
-          </span>
-        {% else %}
-          <span class="price__position-title" id="price__position-title-{{ pid }}">{{ position.title|striptags }}</span>
-        {% endif %}
-
-        <!-- Стоимость позиции -->
-        <span class="price__position-cost">
-        {% if position.free %}
-          {{ 'free'|t }}
-        {% else %}
-          {% if position.cost_prefix or position.cost_from or position.cost or position.cost_suffix %}
-            <span class="price__position-cost-block">
-              <span class="price__position-cost-block-title">{{ 'Cost'|t }}&nbsp;</span>
-
-              {% if position.cost_prefix %}
-                <span class="price__position-cost-prefix">{{ position.cost_prefix|striptags }}</span>&nbsp;
-              {% endif %}
-
-              {% if position.cost_from and not position.cost %}
-                <span class="price__position-cost-value">{{ 'from'|t }} {{ position.cost_from|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
-              {% endif %}
-              {% if position.cost and not position.cost_from %}
-                <span class="price__position-cost-value">{{ position.cost|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
-              {% endif %}
-              {% if position.cost and position.cost_from %}
-                <span class="price__position-cost-value">{{ 'from'|t }} {{ position.cost_from|striptags }} {{ 'before'|t }} {{ position.cost|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
-              {% endif %}
-
-              {% if position.cost_suffix %}
-                &nbsp;<span class="price__position-cost-suffix">{{ position.cost_suffix|striptags }}</span>
-              {% endif %}
+      <div class="price__group-positions clearfix" id="price__group-positions-{{ gid }}" group-id="{{ gid }}">
+        {% for pid, position in group.positions %}
+        <div class="price__position{% if administrator %} price__position-admin{% endif %} clearfix" id="price__position-{{ pid }}">
+          {% if position.nid %}
+            <span class="price__position-title" id="price__position-title-{{ pid }}">
+              <a class="price__position-link" target="_blank" href="{{ path('entity.node.canonical', {'node': position.nid}) }}">{{ position.title|striptags }}</a>
             </span>
+          {% else %}
+            <span class="price__position-title" id="price__position-title-{{ pid }}">{{ position.title|striptags }}</span>
           {% endif %}
-        {% endif %}
-        </span>
-
-        {% if administrator %}
-          <div class="price__administrator">
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/{{ pid }}">{{ 'Edit position'|t }}</a>
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-content-price-position/{{ pid }}/{{ gid }}/group">{{ 'Delete position from content'|t }}</a>
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-position/{{ pid }}">{{ 'Delete position from system'|t }}</a>
-          </div>
-        {% endif %}
-      </div>
-      {% endfor %}
-    </div>
-
-    {% for cid, category in group.categories %}
-      {% if category.visible or administrator %}
-      <div class="price__category" id="price__category-{{ cid }}">
-        <div class="price__category-title">{{ category.title|striptags }}</div>
-        <div class="price__category-description">{{ category.description|striptags }}</div>
-
-        {% if administrator %}
-          <div class="price__administrator">
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/edit-price-category/{{ cid }}">{{ 'Edit category'|t }}</a>
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-category/{{ cid }}">{{ 'Delete category'|t }}</a>
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/0/{{ cid }}/category">{{ 'Create position'|t }}</a>
-            <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/search-price-position/{{ cid }}/category">{{ 'Add position'|t }}</a>
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="price__category-positions clearfix" id="price__category-positions-{{ cid }}" category-id="{{ cid }}">
-        {% for pid, position in category.positions %}
-        <div class="price__position{% if administrator %} price__position-admin{% endif %}" id="price__position-{{ pid }}">
-          <span class="price__position-title" id="price__position-title-{{ pid }}">{{ position.title|striptags }}</span>
 
           <!-- Стоимость позиции -->
           <span class="price__position-cost">
           {% if position.free %}
-            <span class="price__position-cost">{{ 'free'|t }}</span>
+            {{ 'free'|t }}
           {% else %}
             {% if position.cost_prefix or position.cost_from or position.cost or position.cost_suffix %}
               <span class="price__position-cost-block">
@@ -127,22 +64,86 @@
           {% if administrator %}
             <div class="price__administrator">
               <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/{{ pid }}">{{ 'Edit position'|t }}</a>
-              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-content-price-position/{{ pid }}/{{ cid }}/category">{{ 'Delete position from content'|t }}</a>
+              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-content-price-position/{{ pid }}/{{ gid }}/group">{{ 'Delete position from content'|t }}</a>
               <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-position/{{ pid }}">{{ 'Delete position from system'|t }}</a>
             </div>
           {% endif %}
         </div>
         {% endfor %}
+      </div>
 
-        {% if category.cost_discount %}
-        <div class="price__category-cost">
-          <div class="price__category-cost-none-tax">{{ 'Price without tax'|t }}: {{ category.cost_none_discount }} <i class="fa fa-rub" aria-hidden="true"></i></div>
-          <div class="price__category-cost-tax"><i class="fa fa-gift" aria-hidden="true"></i> {{ 'Price action'|t }}: {{ category.cost_discount }} <i class="fa fa-rub" aria-hidden="true"></i></div>
+      {% for cid, category in group.categories %}
+        {% if category.visible or administrator %}
+        <div class="price__category" id="price__category-{{ cid }}">
+          <div class="price__category-title">{{ category.title|striptags }}</div>
+          <div class="price__category-description">{{ category.description|striptags }}</div>
+
+          {% if administrator %}
+            <div class="price__administrator">
+              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/edit-price-category/{{ cid }}">{{ 'Edit category'|t }}</a>
+              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-category/{{ cid }}">{{ 'Delete category'|t }}</a>
+              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/0/{{ cid }}/category">{{ 'Create position'|t }}</a>
+              <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/search-price-position/{{ cid }}/category">{{ 'Add position'|t }}</a>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="price__category-positions clearfix" id="price__category-positions-{{ cid }}" category-id="{{ cid }}">
+          {% for pid, position in category.positions %}
+          <div class="price__position{% if administrator %} price__position-admin{% endif %}" id="price__position-{{ pid }}">
+            <span class="price__position-title" id="price__position-title-{{ pid }}">{{ position.title|striptags }}</span>
+
+            <!-- Стоимость позиции -->
+            <span class="price__position-cost">
+            {% if position.free %}
+              <span class="price__position-cost">{{ 'free'|t }}</span>
+            {% else %}
+              {% if position.cost_prefix or position.cost_from or position.cost or position.cost_suffix %}
+                <span class="price__position-cost-block">
+                  <span class="price__position-cost-block-title">{{ 'Cost'|t }}&nbsp;</span>
+
+                  {% if position.cost_prefix %}
+                    <span class="price__position-cost-prefix">{{ position.cost_prefix|striptags }}</span>&nbsp;
+                  {% endif %}
+
+                  {% if position.cost_from and not position.cost %}
+                    <span class="price__position-cost-value">{{ 'from'|t }} {{ position.cost_from|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
+                  {% endif %}
+                  {% if position.cost and not position.cost_from %}
+                    <span class="price__position-cost-value">{{ position.cost|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
+                  {% endif %}
+                  {% if position.cost and position.cost_from %}
+                    <span class="price__position-cost-value">{{ 'from'|t }} {{ position.cost_from|striptags }} {{ 'before'|t }} {{ position.cost|striptags }} <i class="fa fa-rub" aria-hidden="true"></i></span>
+                  {% endif %}
+
+                  {% if position.cost_suffix %}
+                    &nbsp;<span class="price__position-cost-suffix">{{ position.cost_suffix|striptags }}</span>
+                  {% endif %}
+                </span>
+              {% endif %}
+            {% endif %}
+            </span>
+
+            {% if administrator %}
+              <div class="price__administrator">
+                <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/create-price-position/{{ pid }}">{{ 'Edit position'|t }}</a>
+                <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-content-price-position/{{ pid }}/{{ cid }}/category">{{ 'Delete position from content'|t }}</a>
+                <a class="use-ajax price__administrator-link" data-dialog-type="modal" data-dialog-options='{"width":600}' href="/admin/config/kvantstudio/price/delete-price-position/{{ pid }}">{{ 'Delete position from system'|t }}</a>
+              </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          {% if category.cost_discount %}
+          <div class="price__category-cost">
+            <div class="price__category-cost-none-tax">{{ 'Price without tax'|t }}: {{ category.cost_none_discount }} <i class="fa fa-rub" aria-hidden="true"></i></div>
+            <div class="price__category-cost-tax"><i class="fa fa-gift" aria-hidden="true"></i> {{ 'Price action'|t }}: {{ category.cost_discount }} <i class="fa fa-rub" aria-hidden="true"></i></div>
+          </div>
+          {% endif %}
         </div>
         {% endif %}
-      </div>
-      {% endif %}
-    {% endfor %}
+      {% endfor %}
+    </div>
   </div>
   {% endif %}
   {% endfor %}
