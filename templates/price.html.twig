@@ -33,7 +33,7 @@
         <!-- Стоимость позиции -->
         <span class="price__position-cost">
         {% if position.free %}
-          <span class="price__position-cost">{{ 'free'|t }}</span>
+          {{ 'free'|t }}
         {% else %}
           {% if position.cost_prefix or position.cost_from or position.cost or position.cost_suffix %}
             <span class="price__position-cost-block">
